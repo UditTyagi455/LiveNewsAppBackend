@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "A Node.js backend application for a live news platform built with MongoDB. This application provides real-time news updates to users, leveraging MongoDB as the database for storing news articles and related information. The backend server is developed using Node.js, providing APIs for fetching, filtering, and serving news content to client applications. The application aims to deliver a seamless and efficient news consumption experience with up-to-date information on various topics.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
   },
   "keywords": [
     "Node",
@@ -18,5 +19,12 @@
   "devDependencies": {
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.3",
+    "mongoose": "^8.2.2"
   }
 }
