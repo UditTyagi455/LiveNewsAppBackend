@@ -1,0 +1,22 @@
+{
+  "name": "livenews",
+  "version": "1.0.0",
+  "description": "A Node.js backend application for a live news platform built with MongoDB. This application provides real-time news updates to users, leveraging MongoDB as the database for storing news articles and related information. The backend server is developed using Node.js, providing APIs for fetching, filtering, and serving news content to client applications. The application aims to deliver a seamless and efficient news consumption experience with up-to-date information on various topics.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Node",
+    "js",
+    "Express",
+    "js",
+    "mongoDB"
+  ],
+  "author": "Udit tyagi",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.0",
+    "prettier": "^3.2.5"
+  }
+}
