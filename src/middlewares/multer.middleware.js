@@ -1,5 +1,8 @@
+import fs from "fs";
+import util from "util"
 import multer from "multer";
 
+const maxSize = 100 * 1024 * 1024;
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, "./public/temp")
@@ -11,5 +14,8 @@ const storage = multer.diskStorage({
   })
   
  export const upload = multer({ 
-    storage: storage
+    storage: storage,
+    limits: { fileSize: maxSize },
  })
+
+ 
