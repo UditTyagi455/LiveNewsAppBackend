@@ -4,6 +4,7 @@ const topicsSchema =new mongoose.Schema({
     topic: {
         type: String,
         required: true,
+        unique: true,
     },
     interested: {
         type: Boolean,

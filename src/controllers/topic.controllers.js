@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { Topics } from "../models/topic.models.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
+import { InterestedTopicModel } from "../models/interesttopic.model.js";
 
 
 const getTopics = asyncHandler(async (req,res) => {
@@ -64,7 +65,9 @@ const getTopics = asyncHandler(async (req,res) => {
     //     }
     //   ]
 
-    const fields = await Topics.find();
+    const fields = await Topics.find().select(
+        "-__v"
+      );
 
       return res
       .status(200)
@@ -98,9 +101,35 @@ const addTopics = asyncHandler(async (req,res) => {
     )
 })
 
+const selectedTopics = asyncHandler(async (req,res) => {
+   const {userId,topics} = req.body;
 
+   console.log("req.body ####>>>",userId,topics,topics.length);
+
+  if(!userId){
+    throw new ApiError(400, "All Fields are required!");
+  }
+
+  if(topics.length <= 0){
+    throw new ApiError(400, "All Fields are required!");
+  }
+
+  const InterestedTopic =await InterestedTopicModel.create({
+    userId,
+    topics
+  });
+
+  console.log("InterestedTopic ===>",InterestedTopic);
+
+  return res
+  .status(200)
+  .json(
+    new ApiResponse(200,InterestedTopic,"Interested topic created!")
+  )
+});
 
 export {
     getTopics,
-    addTopics
+    addTopics,
+    selectedTopics
 }
