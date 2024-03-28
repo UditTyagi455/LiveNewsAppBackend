@@ -16,6 +16,10 @@ const userSchema = new Schema(
       type: String,
       required: [true, "password is required"],
     },
+    isCompleted: {
+      type: Boolean,
+      default: false,
+    },
     refreshToken: {
       type: String,
     },

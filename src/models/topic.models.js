@@ -14,4 +14,4 @@ const topicsSchema =new mongoose.Schema({
     timestamps: true
 });
 
-export const Topics =mongoose.model("Topic",topicsSchema);
+export const TopicModel =mongoose.model("Topic",topicsSchema);
