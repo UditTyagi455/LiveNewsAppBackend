@@ -5,9 +5,9 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { FollowAuthorModel } from "../models/followauthor.models.js";
 
-const addAuthors = asyncHandler(async (req,res) => {
-  const {Logo,name,follow} = req.body ;
-  console.log("author-data >>>>>",Logo,name,follow);
+const addAuthors = asyncHandler(async (req, res) => {
+  const { Logo, name, follow } = req.body;
+  console.log("author-data >>>>>", Logo, name, follow);
 
   if ([Logo, name].some((field) => !field)) {
     throw new ApiError(400, "All Fields are required!");
@@ -16,70 +16,76 @@ const addAuthors = asyncHandler(async (req,res) => {
   const Authors = await AuthorModel.create({
     Logo,
     name,
-    follow
+    follow,
   });
 
-  if(!Authors){
-    throw new ApiError(500,"Some Api Error to create the author")
+  if (!Authors) {
+    throw new ApiError(500, "Some Api Error to create the author");
   }
 
   return res
-  .status(200)
-  .json(
-    new ApiResponse(200,Authors,"Author created successfully!")
-  )
-});
-
-const getAuthors = asyncHandler(async (req,res) => {
-   
-    const allAuthors =await AuthorModel.find().select(
-        "-__v"
-      );
-
-    if(!allAuthors){
-        throw new ApiError(500,"there some issue to find the author");
-    }
-
-    return res
     .status(200)
-    .json(
-        new ApiResponse(200,allAuthors,"Author fetched successfully!")
-    )
-
+    .json(new ApiResponse(200, Authors, "Author created successfully!"));
 });
 
-const followAuthors = asyncHandler(async (req,res) => {
-    const {userId,follow} = req.body;
+const getAuthors = asyncHandler(async (req, res) => {
+  const allAuthors = await AuthorModel.find().select(
+    "-__v -createdAt -updatedAt"
+  );
 
-    console.log("req.body >>>>>",userId,follow);
+  if (!allAuthors) {
+    throw new ApiError(500, "there some issue to find the author");
+  }
 
-    if(!userId){
-        throw new ApiError(400, "All Fields are required!");
-      }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, allAuthors, "Author fetched successfully!"));
+});
 
-      if(follow.length <= 0){
-        throw new ApiError(400, "All Fields are required!");
-      }
+const followAuthors = asyncHandler(async (req, res) => {
+  const { userId, follow } = req.body;
+  let responseData;
 
-      const followAuthor = await FollowAuthorModel.create({
-        userId,
-        follow
-      })
-     
-      if(!followAuthor){
-        throw new ApiError(500,"some error into create author")
-      }
-      
-      return res
-      .status(200)
-      .json(
-        new ApiResponse(200,followAuthor,"follow authors created!")
-      )
+  console.log("req.body >>>>>", userId, follow);
 
-})
+  if (!userId) {
+    throw new ApiError(400, "All Fields are required!");
+  }
 
-export {
-    addAuthors,
-    getAuthors,
-    followAuthors
-}
+  if (follow.length <= 0) {
+    throw new ApiError(400, "All Fields are required!");
+  }
+
+  const findByUserId = await FollowAuthorModel.findOne({ userId });
+
+  if(findByUserId){
+    responseData =await FollowAuthorModel.findOneAndUpdate(
+      findByUserId._id,
+      {
+        $set: {
+          follow,
+        },
+      },
+      { new: true }
+    ).select("-__v");
+
+    if (!responseData) {
+      throw new ApiError(500, "some error into create author");
+    }
+  }else {
+    responseData = await FollowAuthorModel.create({
+      userId,
+      follow,
+    });
+  
+    if (!responseData) {
+      throw new ApiError(500, "some error into create author");
+    }
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, responseData, "Thanks for following!"));
+});
+
+export { addAuthors, getAuthors, followAuthors };

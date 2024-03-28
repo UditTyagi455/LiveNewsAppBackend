@@ -6,6 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { UserModels } from "../models/user.models.js";
 import { InterestedTopicModel } from "../models/interesttopic.model.js";
+import { FollowAuthorModel } from "../models/followauthor.models.js";
 
 const uploadAvatar = asyncHandler(async (req, res) => {
   const avtarLocalPath = req.file.path;
@@ -30,27 +31,28 @@ const uploadAvatar = asyncHandler(async (req, res) => {
 });
 
 const createUser = asyncHandler(async (req, res) => {
-  const { id, country, username, fullName, phone, avatar } = req.body;
+  const { userid, country, username, fullName, phone, avatar } = req.body;
   console.log("enter-data >>>>>", country, username, fullName, phone);
 
   if ([country, username, fullName, phone].some((field) => !field)) {
     throw new ApiError(400, "All Fields are required!");
   }
 
-  const findUser = await UserModels.findById(id);
+  const findUser = await UserModels.findById(userid);
   if (!findUser) {
     throw new ApiError(401, "some error to find the user");
   }
   console.log("findUser >>>", findUser.email);
 
-  const Interestedtopic = await InterestedTopicModel.find({userId: id});
-  if(!findUser){
-    throw new ApiError(401, "some error to find the interested topic");
-  }
-  console.log("Interestedtopic >>>>",Interestedtopic[0].topics);
+  const interestedTopic = await InterestedTopicModel.find({ userId: userid });
+
+  console.log("interestedTopic :::", interestedTopic);
+
+  const followAuthor = await FollowAuthorModel.find({ userId: userid });
+  console.log("followAuthor :::", followAuthor);
 
   const CreatedUser = await AboutUserModel.create({
-    userid: id,
+    userid: userid,
     country,
     username,
     fullName,
@@ -62,9 +64,19 @@ const createUser = asyncHandler(async (req, res) => {
     throw new ApiError(500, "some error to create the user!");
   }
 
+  const findCreatedUser = await AboutUserModel.findById(CreatedUser._id);
+  console.log("findCreatedUser >>>>", findCreatedUser);
+
   const result = {
+    _id: findCreatedUser._id,
     email: findUser.email,
-    CreatedUser,
+    userid: findCreatedUser.userid,
+    country: findCreatedUser.country,
+    fullName: findCreatedUser.fullName,
+    username: findCreatedUser.username,
+    phone: findCreatedUser.phone,
+    topics: interestedTopic.length > 0 ? interestedTopic[0].topics : [],
+    author: followAuthor.length > 0 ? followAuthor[0].follow : [],
   };
 
   return res
