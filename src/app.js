@@ -18,9 +18,11 @@ app.use(cookieParser());
 //import router 
 import userRouter from "./routes/user.routes.js";
 import topicsModule from "./routes/topics.routes.js"
+import authorModule from "./routes/authors.routes.js"
 
 
 app.use("/api/v1/users",userRouter);
-app.use("/api/v1/topics",topicsModule)
+app.use("/api/v1/topics",topicsModule);
+app.use("/api/v1/author",authorModule);
 
 export {app};
